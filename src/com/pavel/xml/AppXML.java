@@ -8,22 +8,20 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 public class AppXML {
 
 	public static void main(String[] args) throws IOException, JAXBException, XMLStreamException{
-		FileInputStream input = new FileInputStream("C:/Users/Andreas/Desktop/test.txt");
+		FileInputStream input = new FileInputStream("C:/test.txt");
 		StringWriter writer = new StringWriter();
 		while(input.available()>0) {
 			writer.write(input.read());
 		}
 		StringReader reader = new StringReader(dropDublicate(writer.toString()));
-		JAXBContext context = JAXBContext.newInstance(ItemsList.class, EntityXML.class);
+		JAXBContext context = JAXBContext.newInstance(ItemsList.class, Fields_item.class);
+//		Marshaller marshaller = context.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		Unmarshaller unmarshaler = context.createUnmarshaller();
 		
 //		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -42,8 +40,15 @@ public class AppXML {
 //					continue;
 //				}
 //		}
+		
+		
+//		Fields_item xml = new Fields_item();
+//		ItemsList list = new ItemsList();
+//		list.fields_item.add(xml);
+//		list.fields_item.add(xml);
+//		marshaller.marshal(list, System.out);
 		ItemsList xml = (ItemsList) unmarshaler.unmarshal(reader);
-		System.out.println(xml.itemsList);
+		System.out.println(xml.fields_item.size());
 
 	}
 	
