@@ -13,10 +13,15 @@ import javax.xml.stream.XMLStreamException;
 public class AppXML {
 
 	public static void main(String[] args) throws IOException, JAXBException, XMLStreamException{
-		FileInputStream input = new FileInputStream("C:/test.txt");
+		FileInputStream input = new FileInputStream("C:/Users/Andreas/Desktop/workXMLfolder/test.txt");
 		StringWriter writer = new StringWriter();
 		while(input.available()>0) {
-			writer.write(input.read());
+			int rd = input.read();
+			if ((char)rd=='&') {
+				writer.write("&amp;");
+			} else {
+				writer.write(rd);
+			}
 		}
 		StringReader reader = new StringReader(dropDublicate(writer.toString()));
 		JAXBContext context = JAXBContext.newInstance(ItemsList.class, Fields_item.class);
@@ -48,7 +53,7 @@ public class AppXML {
 //		list.fields_item.add(xml);
 //		marshaller.marshal(list, System.out);
 		ItemsList xml = (ItemsList) unmarshaler.unmarshal(reader);
-		System.out.println(xml.fields_item.size());
+		System.out.println(xml.fields_item);
 
 	}
 	
