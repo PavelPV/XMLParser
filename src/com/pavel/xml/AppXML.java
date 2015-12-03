@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamException;
 
+
 public class AppXML {
 
 	public static void main(String[] args) throws IOException, JAXBException, XMLStreamException{
@@ -24,10 +25,13 @@ public class AppXML {
 			}
 		}
 		StringReader reader = new StringReader(dropDublicate(writer.toString()));
+		System.out.println(dropDublicate(writer.toString()));
 		JAXBContext context = JAXBContext.newInstance(ItemsList.class, Fields_item.class);
 //		Marshaller marshaller = context.createMarshaller();
 //		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		
 		Unmarshaller unmarshaler = context.createUnmarshaller();
+
 		
 //		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 //		XMLEventReader eventReader = inputFactory.createXMLEventReader(reader);
@@ -52,6 +56,21 @@ public class AppXML {
 //		list.fields_item.add(xml);
 //		list.fields_item.add(xml);
 //		marshaller.marshal(list, System.out);
+//		LovObject lv = new LovObject();
+//		lv.setClazz("class");
+//		lv.setLovAction("action");
+//		lv.setLovHeight("500");
+//		lv.setLovLabel("label");
+//		LovReturns_item item = new LovReturns_item();
+//		item.setClazz("class_item");
+//		item.setValue("value_item");
+//		List<LovReturns_item> list = new ArrayList<LovReturns_item>();	
+//		list.add(item);
+//		list.add(item);
+//		lv.setLovReturns_item(list);
+//		marshaller.marshal(lv, System.out);
+		
+		
 		ItemsList xml = (ItemsList) unmarshaler.unmarshal(reader);
 		System.out.println(xml.fields_item);
 
@@ -73,6 +92,12 @@ public class AppXML {
 			tag = tempTag;
 			endIndex = strXml.lastIndexOf(">");
 		}
+		int index = strXml.indexOf(">");
+		strXml.replace(index, index+1, " xmlns:html='x' xmlns:bean='x'>");
+		index = strXml.indexOf("<name>_ge_navigator");
+		strXml.replace(index, strXml.indexOf("</fields_item>", index), "");
+		strXml = new StringBuilder(strXml.toString().replaceAll("<%", "&lt;%"));
+		strXml = new StringBuilder(strXml.toString().replaceAll("%>", "&gt;%"));
 		return strXml.toString(); 
 	}
 

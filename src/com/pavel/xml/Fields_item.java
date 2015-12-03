@@ -43,7 +43,7 @@ public class Fields_item {
 //	private String validate_message_user;
 	private String case_restriction;
 	private String break_line;
-	private String lovObject;
+	private LovObject lovObject;
 	private String lowest_value;
 	private String highest_value;
 //	private String validate_value;
@@ -358,11 +358,11 @@ public class Fields_item {
 	public void setBreak_line(String break_line) {
 	  this.break_line = break_line;
 	}
-	public String getLovObject() {
+	public LovObject getLovObject() {
 	  return lovObject;
 	}
 	@XmlElement
-	public void setLovObject(String lovObject) {
+	public void setLovObject(LovObject lovObject) {
 	  this.lovObject = lovObject;
 	}
 	public String getLowest_value() {
