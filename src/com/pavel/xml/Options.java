@@ -2,6 +2,12 @@ package com.pavel.xml;
 
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * Entity class that describe options parameter in each enumeration field in detail form
+ * 
+ * @author Pavel
+ * Date 04-12-2015
+ */
 public class Options {
 	
 	private String clazz;      

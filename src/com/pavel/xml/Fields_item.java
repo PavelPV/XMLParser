@@ -3,74 +3,41 @@ package com.pavel.xml;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-//@XmlType(name = "fields_item")
+/**
+ * Entity class that describe each field tag in detail form
+ * 
+ * @author Pavel
+ * Date 04-12-2015
+ */
 public class Fields_item {
 	
 	private String clazz;
 	private String name;
 	private String help;
 	private String i18nHelp;	
-//	private String develHelp;
 	private String block_name;
-//	private String role_item;
 	private String database_column;
-//	private String roleinclude;
 	private String i18n;
 	private String show_help;
 	private String show_help_label;
 	private String tabs;
 	private String format;
-//	private String title;
-//	private String titleKey;
-//	private String left;
-//	private String top;
-//	private String z_index;
 	private String property;
 	private String label;
 	private String label_pos;
-//	private String label_bg_color;
-//	private String label_fg_color;
-//	private String label_size;
-//	private String label_align;
-//	private String label_font;
-//	private String labelPropertytext;
-//	private String label_bold;
-//	private String label_italic;
-//	private String justification;
 	private String not_null;
 	private String type;
-//	private String validate_message;
-//	private String validate_message_user;
 	private String case_restriction;
 	private String break_line;
 	private LovObject lovObject;
 	private String lowest_value;
 	private String highest_value;
-//	private String validate_value;
-//	private String validate_type;
-//	private String validate_group;
-//	private String validate_email;
 	private String validate_not_null;
-//	private String validate_minlength;
-//	private String validate_maxlength;
-//	private String validate_regex;
-//	private String src;
 	private String select_allowed;
 	private String update_allowed;
 	private String insert_allowed;
 	private String isCustomized;
 	private String codeItem;
-//	private String labelStyle;
-//	private String labelTitle;
-//	private String labelTitleKey;
-//	private String fieldGridSize;
-//	private String queryOperator;
-//	private String round_value;
-//	private String field_prefix;
-//	private String field_sufix;
-//	private String write;
-//	private String fieldSetProperty;
-//	private String accesskey;
 	private String disabled;
 	private String onblur;
 	private String onchange;
@@ -81,11 +48,8 @@ public class Fields_item {
 	private String onkeypress;
 	private String onkeyup;
 	private String onmousedown;
-//	private String style;
 	private String styleClass;
-//	private String styleId;
-//	private String tabindex;
-	private String field_relation;
+	private Field_relation field_relation;
 	private String onmousemove;
 	private String onmouseout;
 	private String onmouseover;
@@ -127,13 +91,6 @@ public class Fields_item {
 	public void setI18nHelp(String i18nHelp) {
 	  this.i18nHelp = i18nHelp;
 	}
-//	public String getDevelHelp() {
-//	  return develHelp;
-//	}
-//	@XmlElement
-//	public void setDevelHelp(String develHelp) {
-//	  this.develHelp = develHelp;
-//	}
 	public String getBlock_name() {
 	  return block_name;
 	}
@@ -141,13 +98,6 @@ public class Fields_item {
 	public void setBlock_name(String block_name) {
 	  this.block_name = block_name;
 	}
-//	public String getRole_item() {
-//	  return role_item;
-//	}
-//	@XmlElement
-//	public void setRole_item(String role_item) {
-//	  this.role_item = role_item;
-//	}
 	public String getDatabase_column() {
 	  return database_column;
 	}
@@ -155,13 +105,6 @@ public class Fields_item {
 	public void setDatabase_column(String database_column) {
 	  this.database_column = database_column;
 	}
-//	public String getRoleinclude() {
-//	  return roleinclude;
-//	}
-//	@XmlElement
-//	public void setRoleinclude(String roleinclude) {
-//	  this.roleinclude = roleinclude;
-//	}
 	public String getI18n() {
 	  return i18n;
 	}
@@ -197,41 +140,6 @@ public class Fields_item {
 	public void setFormat(String format) {
 	  this.format = format;
 	}
-//	public String getTitle() {
-//	  return title;
-//	}
-//	@XmlElement
-//	public void setTitle(String title) {
-//	  this.title = title;
-//	}
-//	public String getTitleKey() {
-//	  return titleKey;
-//	}
-//	@XmlElement
-//	public void setTitleKey(String titleKey) {
-//	  this.titleKey = titleKey;
-//	}
-//	public String getLeft() {
-//	  return left;
-//	}
-//	@XmlElement
-//	public void setLeft(String left) {
-//	  this.left = left;
-//	}
-//	public String getTop() {
-//	  return top;
-//	}
-//	@XmlElement
-//	public void setTop(String top) {
-//	  this.top = top;
-//	}
-//	public String getZ_index() {
-//	  return z_index;
-//	}
-//	@XmlElement
-//	public void setZ_index(String z_index) {
-//	  this.z_index = z_index;
-//	}
 	public String getProperty() {
 	  return property;
 	}
@@ -253,69 +161,6 @@ public class Fields_item {
 	public void setLabel_pos(String label_pos) {
 	  this.label_pos = label_pos;
 	}
-//	public String getLabel_bg_color() {
-//	  return label_bg_color;
-//	}
-//	@XmlElement
-//	public void setLabel_bg_color(String label_bg_color) {
-//	  this.label_bg_color = label_bg_color;
-//	}
-//	public String getLabel_fg_color() {
-//	  return label_fg_color;
-//	}
-//	@XmlElement
-//	public void setLabel_fg_color(String label_fg_color) {
-//	  this.label_fg_color = label_fg_color;
-//	}
-//	public String getLabel_size() {
-//	  return label_size;
-//	}
-//	@XmlElement
-//	public void setLabel_size(String label_size) {
-//	  this.label_size = label_size;
-//	}
-//	public String getLabel_align() {
-//	  return label_align;
-//	}
-//	@XmlElement
-//	public void setLabel_align(String label_align) {
-//	  this.label_align = label_align;
-//	}
-//	public String getLabel_font() {
-//	  return label_font;
-//	}
-//	@XmlElement
-//	public void setLabel_font(String label_font) {
-//	  this.label_font = label_font;
-//	}
-//	public String getLabelPropertytext() {
-//	  return labelPropertytext;
-//	}
-//	@XmlElement
-//	public void setLabelPropertytext(String labelPropertytext) {
-//	  this.labelPropertytext = labelPropertytext;
-//	}
-//	public String getLabel_bold() {
-//	  return label_bold;
-//	}
-//	@XmlElement
-//	public void setLabel_bold(String label_bold) {
-//	  this.label_bold = label_bold;
-//	}
-//	public String getLabel_italic() {
-//	  return label_italic;
-//	}
-//	@XmlElement
-//	public void setLabel_italic(String label_italic) {
-//	  this.label_italic = label_italic;
-//	}
-//	public String getJustification() {
-//	  return justification;
-//	}
-//	@XmlElement
-//	public void setJustification(String justification) {
-//	  this.justification = justification;
-//	}
 	public String getNot_null() {
 	  return not_null;
 	}
@@ -330,20 +175,6 @@ public class Fields_item {
 	public void setType(String type) {
 	  this.type = type;
 	}
-//	public String getValidate_message() {
-//	  return validate_message;
-//	}
-//	@XmlElement
-//	public void setValidate_message(String validate_message) {
-//	  this.validate_message = validate_message;
-//	}
-//	public String getValidate_message_user() {
-//	  return validate_message_user;
-//	}
-//	@XmlElement
-//	public void setValidate_message_user(String validate_message_user) {
-//	  this.validate_message_user = validate_message_user;
-//	}
 	public String getCase_restriction() {
 	  return case_restriction;
 	}
@@ -379,34 +210,6 @@ public class Fields_item {
 	public void setHighest_value(String highest_value) {
 	  this.highest_value = highest_value;
 	}
-//	public String getValidate_value() {
-//	  return validate_value;
-//	}
-//	@XmlElement
-//	public void setValidate_value(String validate_value) {
-//	  this.validate_value = validate_value;
-//	}
-//	public String getValidate_type() {
-//	  return validate_type;
-//	}
-//	@XmlElement
-//	public void setValidate_type(String validate_type) {
-//	  this.validate_type = validate_type;
-//	}
-//	public String getValidate_group() {
-//	  return validate_group;
-//	}
-//	@XmlElement
-//	public void setValidate_group(String validate_group) {
-//	  this.validate_group = validate_group;
-//	}
-//	public String getValidate_email() {
-//	  return validate_email;
-//	}
-//	@XmlElement
-//	public void setValidate_email(String validate_email) {
-//	  this.validate_email = validate_email;
-//	}
 	public String getValidate_not_null() {
 	  return validate_not_null;
 	}
@@ -414,34 +217,6 @@ public class Fields_item {
 	public void setValidate_not_null(String validate_not_null) {
 	  this.validate_not_null = validate_not_null;
 	}
-//	public String getValidate_minlength() {
-//	  return validate_minlength;
-//	}
-//	@XmlElement
-//	public void setValidate_minlength(String validate_minlength) {
-//	  this.validate_minlength = validate_minlength;
-//	}
-//	public String getValidate_maxlength() {
-//	  return validate_maxlength;
-//	}
-//	@XmlElement
-//	public void setValidate_maxlength(String validate_maxlength) {
-//	  this.validate_maxlength = validate_maxlength;
-//	}
-//	public String getValidate_regex() {
-//	  return validate_regex;
-//	}
-//	@XmlElement
-//	public void setValidate_regex(String validate_regex) {
-//	  this.validate_regex = validate_regex;
-//	}
-//	public String getSrc() {
-//	  return src;
-//	}
-//	@XmlElement
-//	public void setSrc(String src) {
-//	  this.src = src;
-//	}
 	public String getSelect_allowed() {
 	  return select_allowed;
 	}
@@ -477,83 +252,6 @@ public class Fields_item {
 	public void setCodeItem(String codeItem) {
 	  this.codeItem = codeItem;
 	}
-//	public String getLabelStyle() {
-//	  return labelStyle;
-//	}
-//	@XmlElement
-//	public void setLabelStyle(String labelStyle) {
-//	  this.labelStyle = labelStyle;
-//	}
-//	public String getLabelTitle() {
-//	  return labelTitle;
-//	}
-//	@XmlElement
-//	public void setLabelTitle(String labelTitle) {
-//	  this.labelTitle = labelTitle;
-//	}
-//	public String getLabelTitleKey() {
-//	  return labelTitleKey;
-//	}
-//	@XmlElement
-//	public void setLabelTitleKey(String labelTitleKey) {
-//	  this.labelTitleKey = labelTitleKey;
-//	}
-//	public String getFieldGridSize() {
-//	  return fieldGridSize;
-//	}
-//	@XmlElement
-//	public void setFieldGridSize(String fieldGridSize) {
-//	  this.fieldGridSize = fieldGridSize;
-//	}
-//	public String getQueryOperator() {
-//	  return queryOperator;
-//	}
-//	@XmlElement
-//	public void setQueryOperator(String queryOperator) {
-//	  this.queryOperator = queryOperator;
-//	}
-//	public String getRound_value() {
-//	  return round_value;
-//	}
-//	@XmlElement
-//	public void setRound_value(String round_value) {
-//	  this.round_value = round_value;
-//	}
-//	public String getField_prefix() {
-//	  return field_prefix;
-//	}
-//	@XmlElement
-//	public void setField_prefix(String field_prefix) {
-//	  this.field_prefix = field_prefix;
-//	}
-//	public String getField_sufix() {
-//	  return field_sufix;
-//	}
-//	@XmlElement
-//	public void setField_sufix(String field_sufix) {
-//	  this.field_sufix = field_sufix;
-//	}
-//	public String getWrite() {
-//	  return write;
-//	}
-//	@XmlElement
-//	public void setWrite(String write) {
-//	  this.write = write;
-//	}
-//	public String getFieldSetProperty() {
-//	  return fieldSetProperty;
-//	}
-//	@XmlElement
-//	public void setFieldSetProperty(String fieldSetProperty) {
-//	  this.fieldSetProperty = fieldSetProperty;
-//	}
-//	public String getAccesskey() {
-//	  return accesskey;
-//	}
-//	@XmlElement
-//	public void setAccesskey(String accesskey) {
-//	  this.accesskey = accesskey;
-//	}
 	public String getDisabled() {
 	  return disabled;
 	}
@@ -624,13 +322,6 @@ public class Fields_item {
 	public void setOnmousedown(String onmousedown) {
 	  this.onmousedown = onmousedown;
 	}
-//	public String getStyle() {
-//	  return style;
-//	}
-//	@XmlElement
-//	public void setStyle(String style) {
-//	  this.style = style;
-//	}
 	public String getStyleClass() {
 	  return styleClass;
 	}
@@ -638,25 +329,11 @@ public class Fields_item {
 	public void setStyleClass(String styleClass) {
 	  this.styleClass = styleClass;
 	}
-//	public String getStyleId() {
-//	  return styleId;
-//	}
-//	@XmlElement
-//	public void setStyleId(String styleId) {
-//	  this.styleId = styleId;
-//	}
-//	public String getTabindex() {
-//	  return tabindex;
-//	}
-//	@XmlElement
-//	public void setTabindex(String tabindex) {
-//	  this.tabindex = tabindex;
-//	}
-	public String getField_relation() {
+	public Field_relation getField_relation() {
 	  return field_relation;
 	}
 	@XmlElement
-	public void setField_relation(String field_relation) {
+	public void setField_relation(Field_relation field_relation) {
 	  this.field_relation = field_relation;
 	}
 	public String getOnmousemove() {
@@ -738,67 +415,29 @@ public class Fields_item {
 	              + ((!("".equals(name))&&(name!=null)) ? "name=" + name + "\n" : "" )
 	              + ((!("".equals(help))&&(help!=null)) ? "help=" + help + "\n" : "" )
 	              + ((!("".equals(i18nHelp))&&(i18nHelp!=null)) ? "i18nHelp=" + i18nHelp + "\n" : "" )
-//	              + ((!("".equals(develHelp))&&(develHelp!=null)) ? "develHelp=" + develHelp + "\n" : "")
 	              + ((!("".equals(block_name))&&(block_name!=null)) ? "block_name=" + block_name + "\n"  : "")
-//	              + ((!("".equals(role_item))&&(role_item!=null)) ? "role_item=" + role_item + "\n" : "")
 	              + ((!("".equals(database_column))&&(database_column!=null)) ? "database_column=" + database_column + "\n"  : "")
-//	              + ((!("".equals(roleinclude))&&(roleinclude!=null)) ? "roleinclude=" + roleinclude + "\n"  : "")
 	              + ((!("".equals(i18n))&&(i18n!=null)) ? "i18n=" + i18n + "\n"  : "")
 	              + ((!("".equals(show_help))&&(show_help!=null)) ? "show_help=" + show_help + "\n" : "")
 	              + ((!("".equals(show_help_label))&&(show_help_label!=null)) ? "show_help_label=" + show_help_label + "\n"  : "")
 	              + ((!("".equals(tabs))&&(tabs!=null)) ? "tabs=" + tabs + "\n" : "")
 	              + ((!("".equals(format))&&(format!=null)) ? "format=" + format + "\n"  : "")
-//	              + ((!("".equals(title))&&(title!=null)) ? "title=" + title + "\n"  : "")
-//	              + ((!("".equals(titleKey))&&(titleKey!=null)) ? "titleKey=" + titleKey + "\n"  : "")
-//	              + ((!("".equals(left))&&(left!=null)) ? "left=" + left + "\n"  : "")
-//	              + ((!("".equals(top))&&(top!=null)) ? "top=" + top + "\n"  : "")
-//	              + ((!("".equals(z_index))&&(z_index!=null)) ? "z_index=" + z_index + "\n"  : "")
 	              + ((!("".equals(property))&&(property!=null)) ? "property=" + property + "\n"  : "")
 	              + ((!("".equals(label))&&(label!=null)) ? "label=" + label + "\n" : "")
 	              + ((!("".equals(label_pos))&&(label_pos!=null)) ? "label_pos=" + label_pos + "\n"  : "")
-//	              + ((!("".equals(label_bg_color))&&(label_bg_color!=null)) ? "label_bg_color=" + label_bg_color + "\n"  : "")
-//	              + ((!("".equals(label_fg_color))&&(label_fg_color!=null)) ? "label_fg_color=" + label_fg_color + "\n" : "")
-//	              + ((!("".equals(label_size))&&(label_size!=null)) ? "label_size=" + label_size + "\n"  : "")
-//	              + ((!("".equals(label_align))&&(label_align!=null)) ? "label_align=" + label_align + "\n" : "")
-//	              + ((!("".equals(label_font))&&(label_font!=null)) ? "label_font=" + label_font + "\n"  : "")
-//	              + ((!("".equals(labelPropertytext))&&(labelPropertytext!=null)) ? "labelPropertytext="+ labelPropertytext + "\n"  : "")
-//	              + ((!("".equals(label_bold))&&(label_bold!=null)) ? "label_bold=" + label_bold + "\n" : "")
-//	              + ((!("".equals(label_italic))&&(label_italic!=null)) ? "label_italic=" + label_italic + "\n"  : "")
-//	              + ((!("".equals(justification))&&(justification!=null)) ? "justification=" + justification + "\n"  : "")
 	              + ((!("".equals(not_null))&&(not_null!=null)) ? "not_null=" + not_null + "\n"  : "")
 	              + ((!("".equals(type))&&(type!=null)) ? "type=" + type + "\n" : "")
-//	              + ((!("".equals(validate_message))&&(validate_message!=null)) ? "validate_message=" + validate_message + "\n" : "")
-//	              + ((!("".equals(validate_message_user))&&(validate_message_user!=null)) ? "validate_message_user=" + validate_message_user + "\n" : "")
 	              + ((!("".equals(case_restriction))&&(case_restriction!=null)) ? "case_restriction=" + case_restriction + "\n"  : "")
 	              + ((!("".equals(break_line))&&(break_line!=null)) ? "break_line="+ break_line + "\n"  : "")
 	              + ((!("".equals(lovObject))&&(lovObject!=null)) ? "lovObject=" + lovObject + "\n"  : "")
 	              + ((!("".equals(lowest_value))&&(lowest_value!=null)) ? "lowest_value="+ lowest_value + "\n"  : "")
 	              + ((!("".equals(highest_value))&&(highest_value!=null)) ? "highest_value=" + highest_value + "\n" : "")
-//	              + ((!("".equals(validate_value))&&(validate_value!=null)) ? "validate_value=" + validate_value + "\n"  : "")
-//	              + ((!("".equals(validate_type))&&(validate_type!=null)) ? "validate_type="+ validate_type + "\n"  : "")
-//	              + ((!("".equals(validate_group))&&(validate_group!=null)) ? "validate_group=" + validate_group + "\n" : "")
-//	              + ((!("".equals(validate_email))&&(validate_email!=null)) ? "validate_email=" + validate_email + "\n"  : "")
 	              + ((!("".equals(validate_not_null))&&(validate_not_null!=null)) ? "validate_not_null="+ validate_not_null + "\n"  : "")
-//	              + ((!("".equals(validate_minlength))&&(validate_minlength!=null)) ? "validate_minlength="+ validate_minlength + "\n"  : "")
-//	              + ((!("".equals(validate_maxlength))&&(validate_maxlength!=null)) ? "validate_maxlength="+ validate_maxlength + "\n"  : "")
-//	              + ((!("".equals(validate_regex))&&(validate_regex!=null)) ? "validate_regex=" + validate_regex + "\n" : "")
-//	              + ((!("".equals(src))&&(src!=null)) ? "src=" + src + "\n"  : "")
 	              + ((!("".equals(select_allowed))&&(select_allowed!=null)) ? "select_allowed=" + select_allowed + "\n" : "")
 	              + ((!("".equals(update_allowed))&&(update_allowed!=null)) ? "update_allowed=" + update_allowed + "\n"  : "")
 	              + ((!("".equals(insert_allowed))&&(insert_allowed!=null)) ? "insert_allowed="+ insert_allowed + "\n"  : "")
 	              + ((!("".equals(isCustomized))&&(isCustomized!=null)) ? "isCustomized=" + isCustomized + "\n" : "")
 	              + ((!("".equals(codeItem))&&(codeItem!=null)) ? "codeItem=" + codeItem + "\n"  : "")
-//	              + ((!("".equals(labelStyle))&&(labelStyle!=null)) ? "labelStyle=" + labelStyle + "\n" : "")
-//	              + ((!("".equals(labelTitle))&&(labelTitle!=null)) ? "labelTitle=" + labelTitle + "\n"  : "")
-//	              + ((!("".equals(labelTitleKey))&&(labelTitleKey!=null)) ? "labelTitleKey="+ labelTitleKey + "\n"  : "")
-//	              + ((!("".equals(fieldGridSize))&&(fieldGridSize!=null)) ? "fieldGridSize=" + fieldGridSize + "\n" : "")
-//	              + ((!("".equals(queryOperator))&&(queryOperator!=null)) ? "queryOperator=" + queryOperator + "\n"  : "")
-//	              + ((!("".equals(round_value))&&(round_value!=null)) ? "round_value="+ round_value + "\n"  : "")
-//	              + ((!("".equals(field_prefix))&&(field_prefix!=null)) ? "field_prefix=" + field_prefix + "\n" : "")
-//	              + ((!("".equals(field_sufix))&&(field_sufix!=null)) ? "field_sufix=" + field_sufix + "\n"  : "")
-//	              + ((!("".equals(write))&&(write!=null)) ? "write=" + write + "\n" : "")
-//	              + ((!("".equals(fieldSetProperty))&&(fieldSetProperty!=null)) ? "fieldSetProperty=" + fieldSetProperty + "\n"  : "")
-//	              + ((!("".equals(accesskey))&&(accesskey!=null)) ? "accesskey="+ accesskey + "\n"  : "")
 	              + ((!("".equals(disabled))&&(disabled!=null)) ? "disabled=" + disabled + "\n"  : "")
 	              + ((!("".equals(onblur))&&(onblur!=null)) ? "onblur=" + onblur + "\n" : "")
 	              + ((!("".equals(onchange))&&(onchange!=null)) ? "onchange=" + onchange + "\n"  : "")
@@ -809,10 +448,7 @@ public class Fields_item {
 	              + ((!("".equals(onkeypress))&&(onkeypress!=null)) ? "onkeypress=" + onkeypress + "\n" : "")
 	              + ((!("".equals(onkeyup))&&(onkeyup!=null)) ? "onkeyup=" + onkeyup + "\n"  : "")
 	              + ((!("".equals(onmousedown))&&(onmousedown!=null)) ? "onmousedown=" + onmousedown + "\n" : "")
-//	              + ((!("".equals(style))&&(style!=null)) ? "style=" + style + "\n"  : "")
 	              + ((!("".equals(styleClass))&&(styleClass!=null)) ? "styleClass=" + styleClass + "\n" : "")
-//	              + ((!("".equals(styleId))&&(styleId!=null)) ? "styleId=" + styleId + "\n"  : "")
-//	              + ((!("".equals(tabindex))&&(tabindex!=null)) ? "tabindex=" + tabindex + "\n" : "")
 	              + ((!("".equals(field_relation))&&(field_relation!=null)) ? "field_relation=" + field_relation + "\n"  : "")
 	              + ((!("".equals(onmousemove))&&(onmousemove!=null)) ? "onmousemove="+ onmousemove + "\n"  : "")
 	              + ((!("".equals(onmouseout))&&(onmouseout!=null)) ? "onmouseout=" + onmouseout + "\n"  : "")
@@ -825,9 +461,4 @@ public class Fields_item {
 	              + ((!("".equals(options))&&(options!=null)) ? "options=" + options + "\n" : "")
 	              + ((!("".equals(maxlength))&&(maxlength!=null)) ? "maxlength=" + maxlength + "\n" : ""); 
 	}
-	
-	
-	
-	
-
 }

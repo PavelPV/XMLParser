@@ -7,12 +7,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+/**
+ * Entity class that describe lovObject parameter in each field in detail form
+ * 
+ * @author Pavel
+ * Date 04-12-2015
+ */
+//@XmlRootElement
 public class LovObject {
 	
 	private String clazzz;
 	private String lovAction;
-
 	private List<LovReturns_item> lovReturns_item = new ArrayList<LovReturns_item>();
 	private String lovLabel;
 	private String lovHeight;
@@ -23,35 +28,41 @@ public class LovObject {
 	public LovObject() {
 	}
 	
-//	static class LovReturns_item {
-//		
-//		private String clazz;
-//		private String value;
-//		
-//		public LovReturns_item() {
-//		}
-//		
-//		public String getClazz() {
-//			return clazz;
-//		}
-//		@XmlElement(name="class")
-//		public void setClazz(String clazz) {
-//			this.clazz = clazz;
-//		}
-//		public String getValue() {
-//			return value;
-//		}
-//		@XmlElement
-//		public void setValue(String value) {
-//			this.value = value;
-//		}
-//
-//		@Override
-//		public String toString() {
-//			return "LovReturns_item [clazz=" + clazz + ", value=" + value + "]";
-//		}
-//		
-//	}
+	/**
+	 * Inner static class
+	 * for list of lovReturns_item elements in xml
+	 * @author Pavel
+	 * Date 04-12-2015
+	 */
+	static class LovReturns_item {
+		
+		private String clazz;
+		private String value;
+		
+		public LovReturns_item() {
+		}
+		
+		public String getClazz() {
+			return clazz;
+		}
+		@XmlElement(name="class")
+		public void setClazz(String clazz) {
+			this.clazz = clazz;
+		}
+		public String getValue() {
+			return value;
+		}
+		@XmlElement
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return "LovReturns_item [clazz=" + clazz + ", value=" + value + "]";
+		}
+		
+	}
 	
 	public String getClazz() {
 		return clazzz;

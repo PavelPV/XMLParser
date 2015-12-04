@@ -1,6 +1,8 @@
 package com.pavel.xml;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -10,73 +12,120 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamException;
 
+import com.pavel.write.App;
+
 
 public class AppXML {
 
 	public static void main(String[] args) throws IOException, JAXBException, XMLStreamException{
 		FileInputStream input = new FileInputStream("C:/Users/Andreas/Desktop/workXMLfolder/test.txt");
+		BufferedReader bufferedReader = new BufferedReader(new FileReader("C:/Users/Andreas/Desktop/workXMLfolder/changes.txt"));
 		StringWriter writer = new StringWriter();
 		while(input.available()>0) {
-			int rd = input.read();
-			if ((char)rd=='&') {
-				writer.write("&amp;");
-			} else {
-				writer.write(rd);
-			}
+			writer.write(input.read());
 		}
 		StringReader reader = new StringReader(dropDublicate(writer.toString()));
-		System.out.println(dropDublicate(writer.toString()));
-		JAXBContext context = JAXBContext.newInstance(ItemsList.class, Fields_item.class);
-//		Marshaller marshaller = context.createMarshaller();
-//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		
+		JAXBContext context = JAXBContext.newInstance(Generator.class);
+
 		Unmarshaller unmarshaler = context.createUnmarshaller();
 
+		Generator xml = (Generator) unmarshaler.unmarshal(reader);
 		
-//		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-//		XMLEventReader eventReader = inputFactory.createXMLEventReader(reader);
-//		ItemsList xml = null;
-//		
-//		while(eventReader.hasNext()) {
-//				XMLEvent eventS = eventReader.nextEvent();
-//				if (eventS.isStartElement()) {
-//					StartElement startElement = eventS.asStartElement();
-//					if ((startElement.getName().getLocalPart()).equals("fields")) {
-//						System.out.println();
-//						xml = (ItemsList) unmarshaler.unmarshal(eventReader);
-//					}
-//				} else {
-//					continue;
-//				}
-//		}
+		System.out.println(xml);
 		
+//		makeChanges(bufferedReader);
+	}
 		
-//		Fields_item xml = new Fields_item();
-//		ItemsList list = new ItemsList();
-//		list.fields_item.add(xml);
-//		list.fields_item.add(xml);
-//		marshaller.marshal(list, System.out);
-//		LovObject lv = new LovObject();
-//		lv.setClazz("class");
-//		lv.setLovAction("action");
-//		lv.setLovHeight("500");
-//		lv.setLovLabel("label");
-//		LovReturns_item item = new LovReturns_item();
-//		item.setClazz("class_item");
-//		item.setValue("value_item");
-//		List<LovReturns_item> list = new ArrayList<LovReturns_item>();	
-//		list.add(item);
-//		list.add(item);
-//		lv.setLovReturns_item(list);
-//		marshaller.marshal(lv, System.out);
-		
-		
-		ItemsList xml = (ItemsList) unmarshaler.unmarshal(reader);
-		System.out.println(xml.fields_item);
 
+//	public static void main(String[] args) throws JAXBException {
+//		JAXBContext context = JAXBContext.newInstance(Blocks_item.class);
+//		Marshaller marshaller = context.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+////		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+////		XMLEventReader eventReader = inputFactory.createXMLEventReader(reader);
+////		ItemsList xml = null;
+//		
+////		while(eventReader.hasNext()) {
+////				XMLEvent eventS = eventReader.nextEvent();
+////				if (eventS.isStartElement()) {
+////					StartElement startElement = eventS.asStartElement();
+////					if ((startElement.getName().getLocalPart()).equals("fields")) {
+////						System.out.println();
+////						xml = (ItemsList) unmarshaler.unmarshal(eventReader);
+////					}
+////				} else {
+////					continue;
+////				}
+////		}		
+//		Blocks_item item = new Blocks_item();
+//		item.setBanner_type("banner");
+//	
+//		Fields_item xml = new Fields_item();
+//		xml.setClazz("class");
+//		List<Fields_item> list = new ArrayList<Fields_item> ();
+//		list.add(xml);
+//		list.add(xml);
+//		item.setFields_item(list);
+//		marshaller.marshal(item, System.out);		
+//
+//	}
+
+	
+	/**
+	 * Method that makes all changes in xml file
+	 * @param bufferedReader
+	 * @throws IOException
+	 */
+	public static void makeChanges(BufferedReader bufferedReader) throws IOException {
+		String line = "";
+		String name = "";
+		while((line = bufferedReader.readLine())!=null) {
+			String[] mas = line.split("=");
+			if (mas[0].equals("name")) {
+				name = mas[1];
+				continue;
+			}
+			if (!(name.equals(""))) {
+				write(name, mas[0], mas[1]);
+			}
+		}
 	}
 	
+	
+	/**
+	 * Method for write all changes into xml file
+	 * Using App class from com.pavel.write package
+	 * @param name of field to change
+	 * @param tag of parameter to change
+	 * @param tagValue - value of tag(parameter) that must be changed
+	 * @throws IOException
+	 */
+	public static void write(String name, String tag, String tagValue) throws IOException {
+		App write = new App("C:/Users/Andreas/Desktop/workXMLfolder/test.txt");
+		int index = write.getFirstIndexOf("<name>" + name + "</name>");
+		/*
+		 * find parameter for changing(marker) by regex pattern
+		 */
+		String marker = write.getFirstIndexOfByPattern("\\s+(<" + tag + ">\\S*</" + tag + ">)", index);
+		if (!(marker.equals("-1"))) {
+			index = write.getFirstIndexOf(marker, index);
+			write.run(marker, "<" + tag + ">" + tagValue + "</" + tag + ">", index, 1);
+		}
+	}
+	
+	/**
+	 * This method clean xml from duplicate close tags
+	 * and other special characters : (^, <%, %>)
+	 * also it add prefix namespace definition into first tag
+	 * throw navigator field from return string
+	 * @author Pavel
+	 * @param xmlString - incorrect xml from file
+	 * @return String value - correct xml
+	 */
 	public static String dropDublicate(String xmlString) {
+		/*
+		 * find duplicate tags
+		 */
 		int indexStart = xmlString.indexOf("</");
 		int indexEnd = xmlString.indexOf(">", indexStart);
 		int endIndex = xmlString.lastIndexOf(">");
@@ -92,13 +141,28 @@ public class AppXML {
 			tag = tempTag;
 			endIndex = strXml.lastIndexOf(">");
 		}
+		/*
+		 * add prefix namespace definition into first tag
+		 */
 		int index = strXml.indexOf(">");
 		strXml.replace(index, index+1, " xmlns:html='x' xmlns:bean='x'>");
+		/*
+		 * throw navigator field from return string
+		 */
 		index = strXml.indexOf("<name>_ge_navigator");
 		strXml.replace(index, strXml.indexOf("</fields_item>", index), "");
+		index = strXml.indexOf("<name>bl_form</name>");
+		strXml.replace(index, strXml.indexOf("</blocks_item>",  index), "");
+		index = strXml.indexOf("<pluggableValidators_item>");
+		strXml.replace(index, strXml.indexOf("</pluggableValidators>",  index), "");
+		/*
+		 * replace all special characters in xml
+		 */
 		strXml = new StringBuilder(strXml.toString().replaceAll("<%", "&lt;%"));
 		strXml = new StringBuilder(strXml.toString().replaceAll("%>", "&gt;%"));
-		return strXml.toString(); 
+		strXml = new StringBuilder(strXml.toString().replaceAll("&", "&amp;"));
+		return strXml.toString();
+		
 	}
 
 }
