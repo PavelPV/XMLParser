@@ -1,7 +1,9 @@
 package com.pavel.xml;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -13,28 +15,47 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamException;
 
 import com.pavel.write.App;
+import com.pavel.xml.entity.Generator;
 
 
 public class AppXML {
-
-	public static void main(String[] args) throws IOException, JAXBException, XMLStreamException{
-		FileInputStream input = new FileInputStream("C:/Users/Andreas/Desktop/workXMLfolder/test.txt");
-		BufferedReader bufferedReader = new BufferedReader(new FileReader("C:/Users/Andreas/Desktop/workXMLfolder/changes.txt"));
+	
+	private FileInputStream input;
+	
+	public AppXML(String file) throws FileNotFoundException {
+		this.input = new FileInputStream(file);
+	}
+	
+	public Generator parseXml() throws JAXBException, IOException {
 		StringWriter writer = new StringWriter();
 		while(input.available()>0) {
 			writer.write(input.read());
 		}
-		StringReader reader = new StringReader(dropDublicate(writer.toString()));
+		StringReader reader = new StringReader(this.dropDublicate(writer.toString()));
 		JAXBContext context = JAXBContext.newInstance(Generator.class);
-
 		Unmarshaller unmarshaler = context.createUnmarshaller();
-
 		Generator xml = (Generator) unmarshaler.unmarshal(reader);
-		
-		System.out.println(xml);
-		
-//		makeChanges(bufferedReader);
+		return xml;
 	}
+
+//	public static void main(String[] args) throws IOException, JAXBException, XMLStreamException{
+//		FileInputStream input = new FileInputStream("C:/Users/Andreas/Desktop/workXMLfolder/test.txt");
+//		BufferedReader bufferedReader = new BufferedReader(new FileReader("C:/Users/Andreas/Desktop/workXMLfolder/changes.txt"));
+//		StringWriter writer = new StringWriter();
+//		while(input.available()>0) {
+//			writer.write(input.read());
+//		}
+//		StringReader reader = new StringReader(dropDublicate(writer.toString()));
+//		JAXBContext context = JAXBContext.newInstance(Generator.class);
+//
+//		Unmarshaller unmarshaler = context.createUnmarshaller();
+//
+//		Generator xml = (Generator) unmarshaler.unmarshal(reader);
+//		
+//		System.out.println(xml);
+//		
+////		makeChanges(bufferedReader);
+//	}
 		
 
 //	public static void main(String[] args) throws JAXBException {
@@ -76,7 +97,7 @@ public class AppXML {
 	 * @param bufferedReader
 	 * @throws IOException
 	 */
-	public static void makeChanges(BufferedReader bufferedReader) throws IOException {
+	public void makeChanges(BufferedReader bufferedReader) throws IOException {
 		String line = "";
 		String name = "";
 		while((line = bufferedReader.readLine())!=null) {
@@ -100,9 +121,10 @@ public class AppXML {
 	 * @param tagValue - value of tag(parameter) that must be changed
 	 * @throws IOException
 	 */
-	public static void write(String name, String tag, String tagValue) throws IOException {
+	public void write(String name, String tag, String tagValue) throws IOException {
 		App write = new App("C:/Users/Andreas/Desktop/workXMLfolder/test.txt");
-		int index = write.getFirstIndexOf("<name>" + name + "</name>");
+		int formIndex = write.getFirstIndexOf("bl_form");
+		int index = write.getFirstIndexOf("<name>" + name + "</name>", formIndex);
 		/*
 		 * find parameter for changing(marker) by regex pattern
 		 */
@@ -122,7 +144,7 @@ public class AppXML {
 	 * @param xmlString - incorrect xml from file
 	 * @return String value - correct xml
 	 */
-	public static String dropDublicate(String xmlString) {
+	public String dropDublicate(String xmlString) {
 		/*
 		 * find duplicate tags
 		 */
@@ -145,16 +167,23 @@ public class AppXML {
 		 * add prefix namespace definition into first tag
 		 */
 		int index = strXml.indexOf(">");
+		index = strXml.indexOf(">", index+1);
 		strXml.replace(index, index+1, " xmlns:html='x' xmlns:bean='x'>");
 		/*
 		 * throw navigator field from return string
 		 */
 		index = strXml.indexOf("<name>_ge_navigator");
-		strXml.replace(index, strXml.indexOf("</fields_item>", index), "");
+		if (index != -1) {
+			strXml.replace(index, strXml.indexOf("</fields_item>", index), "");
+		}
 		index = strXml.indexOf("<name>bl_form</name>");
-		strXml.replace(index, strXml.indexOf("</blocks_item>",  index), "");
+		if (index != -1) {
+			strXml.replace(index, strXml.indexOf("</blocks_item>",  index), "");
+		}
 		index = strXml.indexOf("<pluggableValidators_item>");
-		strXml.replace(index, strXml.indexOf("</pluggableValidators>",  index), "");
+		if (index != -1) {
+			strXml.replace(index, strXml.indexOf("</pluggableValidators>",  index), "");
+		}
 		/*
 		 * replace all special characters in xml
 		 */

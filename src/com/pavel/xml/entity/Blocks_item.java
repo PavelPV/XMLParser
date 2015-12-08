@@ -1,4 +1,4 @@
-package com.pavel.xml;
+package com.pavel.xml.entity;
 
 import java.util.List;
 
@@ -21,6 +21,7 @@ public class Blocks_item {
 	private String displayError;
 	private String navigatorProperties;
 	private List<Fields_item> fields_item;
+	private List<Columns_item> columns_item;
 	
 	public Blocks_item(){}
 
@@ -127,20 +128,32 @@ public class Blocks_item {
 	public void setFields_item(List<Fields_item> fields_item) {
 		this.fields_item = fields_item;
 	}
+	
+	public List<Columns_item> getColumns_item() {
+		return columns_item;
+	}
+	@XmlElementWrapper(name="columns")
+	public void setColumns_item(List<Columns_item> columns_item) {
+		this.columns_item = columns_item;
+	}
 
 	@Override
 	public String toString() {
-		return "Blocks_item [clazz=" + clazz + ", name=" + name + ", title="
-				+ title + ", i18n=" + i18n + ", database=" + database
-				+ ", db_object=" + db_object + ", message_type=" + message_type
-				+ ", banner_type=" + banner_type + ", tab_pos=" + tab_pos
-				+ ", block_size=" + block_size + ", displayError="
-				+ displayError + ", navigatorProperties=" + navigatorProperties
-				+ ", fields_item=" + fields_item + "]";
+		return "Block_item: \n"
+				+ "[clazz=" + clazz + "\n"
+				+ "name=" + name  + "\n"
+				+ "title=" + title + "\n"
+				+ "i18n=" + i18n + "\n"
+				+ "database=" + database + "\n"
+				+ "db_object=" + db_object + "\n"
+				+ "message_type=" + message_type + "\n"
+				+ "banner_type=" + banner_type + "\n"
+				+ "tab_pos=" + tab_pos + "\n"
+				+ "block_size=" + block_size + "\n"
+				+ "displayError=" + displayError + "\n"
+				+ "navigatorProperties=" + navigatorProperties + "\n"
+				+ "Fields: \n" + fields_item + "\n"
+				+ "Columns: \n"+ columns_item + "]";
 	}
-
-
-	
-	
 
 }

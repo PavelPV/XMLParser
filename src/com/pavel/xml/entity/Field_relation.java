@@ -1,4 +1,4 @@
-package com.pavel.xml;
+package com.pavel.xml.entity;
 
 import java.util.List;
 
