@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -15,8 +17,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import com.pavel.xml.entity.Blocks_item;
 import com.pavel.xml.entity.Columns_item;
@@ -24,41 +27,43 @@ import com.pavel.xml.entity.Fields_item;
 import com.pavel.xml.entity.Generator;
 
 public class Window extends JFrame implements ActionListener {
-	
+
 	private AppXML app;
 	
 	private JPanel report;
 	private JPanel detail;
-	
+
 	private JButton b_choosefile;
 	private JButton b_chooseFileChanges;
-	
+
 	private JLabel l_pageName;
 	private JTextField t_pageName;
-	
+
 	private JLabel l_reportName;
 	private JTextField t_reportName;
 	private JLabel l_reportLabel;
 	private JTextField t_reportLabel;
 	private JLabel l_reportDBObject;
 	private JTextField t_reportDBObject;
-	
-	private JTextArea ta_report;
-	private JScrollPane s_report;
-	
+
+	// private JTextArea ta_report;
+	// private JScrollPane s_report;
+
 	private JLabel l_detailName;
 	private JTextField t_detailName;
 	private JLabel l_detailLabel;
 	private JTextField t_detailLabel;
 	private JLabel l_detailDBObject;
 	private JTextField t_detailDBObject;
-	
-	private JTextArea ta_detail;
-	private JScrollPane s_detail;
-	
 
-	
-	
+	// private JTextArea ta_detail;
+	// private JScrollPane s_detail;
+
+	private JScrollPane s_report;
+	private JTable tab_report;
+	private JScrollPane s_detail;
+	private JTable tab_detail;
+
 	public Window() {
 		super("Xml Parser");
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -91,17 +96,17 @@ public class Window extends JFrame implements ActionListener {
 		this.t_detailDBObject = new JTextField(20);
 		this.t_detailDBObject.setEditable(false);
 		
-		this.ta_report = new JTextArea();
-		this.s_report = new JScrollPane(ta_report);
-		this.ta_report.setEditable(false);
-		this.ta_report.setColumns(40);
-		this.ta_report.setRows(30);
-		
-		this.ta_detail = new JTextArea();
-		this.s_detail = new JScrollPane(ta_detail);
-		this.ta_detail.setEditable(false);
-		this.ta_detail.setColumns(40);
-		this.ta_detail.setRows(30);
+//		this.ta_report = new JTextArea();
+//		this.s_report = new JScrollPane(ta_report);
+//		this.ta_report.setEditable(false);
+//		this.ta_report.setColumns(40);
+//		this.ta_report.setRows(30);
+//		
+//		this.ta_detail = new JTextArea();
+//		this.s_detail = new JScrollPane(ta_detail);
+//		this.ta_detail.setEditable(false);
+//		this.ta_detail.setColumns(40);
+//		this.ta_detail.setRows(30);
 		
 		this.report = new JPanel();
 		this.report.setPreferredSize(new Dimension(450, 600));
@@ -122,6 +127,22 @@ public class Window extends JFrame implements ActionListener {
 		this.detail.add(l_detailDBObject);
 		this.detail.add(t_detailDBObject);
 //		this.detail.add(s_detail);
+		
+		String[] columnsReport = {"Name", "Label", "Type"};
+		this.tab_report = new JTable(new DefaultTableModel(new Object[][]{}, columnsReport));
+		this.s_report = new JScrollPane(tab_report);
+		this.s_report.setPreferredSize(new Dimension(450, 300));
+		this.tab_report.setAutoscrolls(true);
+		
+		this.report.add(s_report);
+		
+		String[] columnsDetail = {"Name", "Label", "Type", "Not Null"};
+		this.tab_detail = new JTable(new DefaultTableModel(new Object[][]{}, columnsDetail));
+		this.s_detail = new JScrollPane(tab_detail);
+		this.s_detail.setPreferredSize(new Dimension(450, 300));
+		this.tab_detail.setAutoscrolls(true);
+		
+		this.detail.add(s_detail);
 		
 		JPanel panel = new JPanel();
 		panel.add(b_choosefile);
@@ -144,19 +165,19 @@ public class Window extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if (event.getSource()==b_choosefile) {
+		if (event.getSource() == b_choosefile) {
 			JFileChooser fileOpen = new JFileChooser();
 			fileOpen.setCurrentDirectory(new File("C:/Users/Andreas/Desktop/workXMLFolder"));
 			int approve = fileOpen.showDialog(null, "Choose xml file");
-			if (approve==JFileChooser.APPROVE_OPTION) {
+			if (approve == JFileChooser.APPROVE_OPTION) {
 				try {
 					this.app = new AppXML(fileOpen.getSelectedFile().getAbsolutePath().replace('\\', '/'));
 					Generator generator = this.app.parseXml();
 					Blocks_item reportBlock = new Blocks_item();
 					Blocks_item detailBlock = new Blocks_item();
-					for(Blocks_item block : generator.getBlocks_item()) {
-						if (block.getName()!=null) {
-							if (block.getName().contains("report")){
+					for (Blocks_item block : generator.getBlocks_item()) {
+						if (block.getName() != null) {
+							if (block.getName().contains("report")) {
 								reportBlock = block;
 							} else {
 								detailBlock = block;
@@ -164,36 +185,50 @@ public class Window extends JFrame implements ActionListener {
 						}
 					}
 					this.t_pageName.setText(generator.getFile_name());
-					
+
 					this.t_reportName.setText(reportBlock.getName());
 					this.t_reportLabel.setText(reportBlock.getTitle());
 					this.t_reportDBObject.setText(reportBlock.getDb_object());
-					for(Columns_item column : reportBlock.getColumns_item()) {
-						if (column.getName()!=null) {
-							this.report.add(new JLabel("Name: " + column.getName() + " Label: " + column.getLabel() + " Type: " + column.getType()));
+					List<Object[]> objectsReport = new ArrayList<Object[]>();
+					for (Columns_item column : reportBlock.getColumns_item()) {
+						if (column.getName() != null) {
+							objectsReport.add(new Object[] { column.getName(), column.getLabel(), column.getType() });
 						}
 					}
-//					this.ta_report.setText(reportBlock.getColumns_item().toString());
-					
+					DefaultTableModel modelReport = (DefaultTableModel) this.tab_report.getModel();
+					while(modelReport.getRowCount()>0) {
+						modelReport.removeRow(0);
+					}
+					for (Object[] o : objectsReport) {
+						modelReport.addRow(o);
+					}
+
 					this.t_detailName.setText(detailBlock.getName());
 					this.t_detailLabel.setText(detailBlock.getTitle());
 					this.t_detailDBObject.setText(detailBlock.getDb_object());
-					for(Fields_item field : detailBlock.getFields_item()) {
-						if (field.getName()!=null) {
-							this.detail.add(new JLabel("Name: " + field.getName() + " Label: " + field.getLabel() + " Type: " + field.getType() + " Not Null: " + field.getNot_null()));
+					List<Object[]> objectsDetail = new ArrayList<Object[]>();
+					for (Fields_item field : detailBlock.getFields_item()) {
+						if (field.getName() != null) {
+							objectsDetail.add(new Object[] {field.getName(), field.getLabel(), field.getType(), field.getNot_null()});
 						}
 					}
-					this.ta_detail.setText(detailBlock.getFields_item().toString());
-					
-				} catch(Exception e) {
+					DefaultTableModel modelDetail = (DefaultTableModel) this.tab_detail.getModel();
+					while(modelDetail.getRowCount()>0) {
+						modelDetail.removeRow(0);
+					}
+					for (Object[] o : objectsDetail) {
+						modelDetail.addRow(o);
+					}
+
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-		} else if (event.getSource()==b_chooseFileChanges) {
+		} else if (event.getSource() == b_chooseFileChanges) {
 			JFileChooser fileChanges = new JFileChooser();
-			fileChanges.setCurrentDirectory(new File("C:/Users/Andreas/Desktop/workXMLFolder"));
+			fileChanges.setCurrentDirectory(new File( "C:/Users/Andreas/Desktop/workXMLFolder"));
 			int approve = fileChanges.showDialog(null, "Choose file with your changes");
-			if (approve==JFileChooser.APPROVE_OPTION) {
+			if (approve == JFileChooser.APPROVE_OPTION) {
 				try {
 					this.app.makeChanges(new BufferedReader(new FileReader(fileChanges.getSelectedFile().getAbsolutePath())));
 				} catch (FileNotFoundException e) {
