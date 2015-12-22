@@ -89,21 +89,34 @@ public class App {
 	 * @throws IOException
 	 */
 	public void run(String marker, String newText, int index, int mode) throws IOException {
-		List<Integer> listOfIndex = this.getAllIndexOf(marker);
-		if (!listOfIndex.contains(index)) {
-			return;
-		}
+//		List<Integer> listOfIndex = this.getAllIndexOf(marker);
+//		if (!listOfIndex.contains(index)) {
+//			return;
+//		}
 		String t;
 		switch (mode) {
 		case 0 : 
 			t = this.readFrom(index);
 			this.writeInto(index, t, newText + " ");
 			break;
+//		case 1 : 
+//			if (newText.length() < marker.length()) {
+//				t = "";
+//				for(int i = 0 ; i <= marker.length() - newText.length(); i++) {
+//					t += " ";
+//					this.writeInto(index, t, newText);
+//				}
+//			} else {
+//				t = this.readFrom(index + marker.length() + 1);
+//				this.writeInto(index, t, newText);
+////				raFile.setLength(raFile.length() - (marker.length() + 1 - newText.length()));				
+//			}
+//			break;
 		case 1 : 
-			t = this.readFrom(index + marker.length());
+			t = this.readFrom(index + marker.length() + 1);
 			this.writeInto(index, t, newText);
 			if (newText.length() < marker.length()) {
-				raFile.setLength(raFile.length() - (marker.length() - newText.length()));
+				raFile.setLength(raFile.length() - (marker.length() + 1 - newText.length()));
 			}
 			break;
 		case 2 :

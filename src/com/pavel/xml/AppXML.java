@@ -21,9 +21,11 @@ import com.pavel.xml.entity.Generator;
 public class AppXML {
 	
 	private FileInputStream input;
+	private String path;
 	
 	public AppXML(String file) throws FileNotFoundException {
 		this.input = new FileInputStream(file);
+		this.path = file;
 	}
 	
 	public Generator parseXml() throws JAXBException, IOException {
@@ -91,7 +93,6 @@ public class AppXML {
 //
 //	}
 
-	
 	/**
 	 * Method that makes all changes in xml file
 	 * @param bufferedReader
@@ -108,11 +109,13 @@ public class AppXML {
 			}
 			if (!(name.equals(""))) {
 				write(name, mas[0], mas[1]);
+				if (mas[0].equals("new")) {
+					name = mas[1];
+				}
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Method for write all changes into xml file
 	 * Using App class from com.pavel.write package
@@ -122,17 +125,65 @@ public class AppXML {
 	 * @throws IOException
 	 */
 	public void write(String name, String tag, String tagValue) throws IOException {
-		App write = new App("C:/Users/Andreas/Desktop/workXMLfolder/test.txt");
-		int formIndex = write.getFirstIndexOf("bl_form");
-		int index = write.getFirstIndexOf("<name>" + name + "</name>", formIndex);
+		App write = new App(this.path);
+
+		int fromIndex = write.getFirstIndexOf("bl_form");
+		int index = write.getFirstIndexOf("<name>" + name + "</name>", fromIndex);
+		if (index == -1) {
+			return;
+		}
+		int endIndex = write.getFirstIndexOf("</fields_item>", index);
+		
+		if (tag.equals("new")) {
+			write.run("<name>" + name + "</name>", "\t<name>" + tagValue + "</name>", index, 1);
+			writeRep(name, tag, tagValue);
+			return;
+		}
+		/*
+		 * find parameter for changing(marker) by regex pattern
+		 */
+
+		String marker = write.getFirstIndexOfByPattern("\\s+(<" + tag + ">\\S*</" + tag + ">)", index);
+		if (!(marker.equals("-1"))) {
+			index = write.getFirstIndexOf(marker, index);
+			if (index <= endIndex) {
+				write.run(marker, "\t<" + tag + ">" + tagValue + "</" + tag + ">", index, 1);
+			}
+		}
+		if (tag.equals("label")) {
+			writeRep(name, tag, tagValue);
+		}
+	}
+	
+	/**
+	 * Method for write all changes into xml file into report part
+	 * Using App class from com.pavel.write package
+	 * @param name of field to change
+	 * @param tag of parameter to change
+	 * @param tagValue - value of tag(parameter) that must be changed
+	 * @throws IOException
+	 */
+	public void writeRep(String name, String tag, String tagValue) throws IOException {
+		App write = new App(this.path);
+
+		int fromIndex = write.getFirstIndexOf("bl_report");
+		int index = write.getFirstIndexOf("<name>" + name + "</name>", fromIndex);
+		int endIndex = write.getFirstIndexOf("</columns_item>", index);
+		if (tag.equals("new")) {
+			write.run("<name>" + name + "</name>", "\t<name>" + tagValue + "</name>", index, 1);
+			return;
+		}
 		/*
 		 * find parameter for changing(marker) by regex pattern
 		 */
 		String marker = write.getFirstIndexOfByPattern("\\s+(<" + tag + ">\\S*</" + tag + ">)", index);
 		if (!(marker.equals("-1"))) {
 			index = write.getFirstIndexOf(marker, index);
-			write.run(marker, "<" + tag + ">" + tagValue + "</" + tag + ">", index, 1);
+			if (index < endIndex) {
+				write.run(marker, "\t<" + tag + ">" + tagValue + "</" + tag + ">", index, 1);
+			}
 		}
+
 	}
 	
 	/**

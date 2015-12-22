@@ -13,7 +13,7 @@ public class Link {
 	
 	public Link(){}
 	
-	static class Parameters_item{
+	public static class Parameters_item{
 		private String clazz;
 		private String value;
 		
@@ -37,7 +37,7 @@ public class Link {
 
 		@Override
 		public String toString() {
-			return "Parameters_item [clazz=" + clazz + ", value=" + value + "]";
+			return "value=" + value ;
 		}
 				
 	}
@@ -67,8 +67,8 @@ public class Link {
 	}
 	@Override
 	public String toString() {
-		return "Link [href=" + href + ", cursor=" + cursor
-				+ ", parameters_item=" + parameters_item + "]";
+		return "href=" + href + ", cursor=" + cursor
+				+ ", parameters_item=" + parameters_item;
 	}
 
 }

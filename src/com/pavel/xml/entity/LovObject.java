@@ -34,7 +34,7 @@ public class LovObject {
 	 * @author Pavel
 	 * Date 04-12-2015
 	 */
-	static class LovReturns_item {
+	public static class LovReturns_item {
 		
 		private String clazz;
 		private String value;
@@ -59,7 +59,7 @@ public class LovObject {
 
 		@Override
 		public String toString() {
-			return "LovReturns_item [clazz=" + clazz + ", value=" + value + "]";
+			return value;
 		}
 		
 	}
@@ -122,10 +122,7 @@ public class LovObject {
 	}
 	@Override
 	public String toString() {
-		return "LovObject [clazz=" + clazzz + ", lovAction=" + lovAction
-				+ ", lovReturns=" + lovReturns_item + ", lovLabel=" + lovLabel
-				+ ", lovHeight=" + lovHeight + ", lovWidth=" + lovWidth
-				+ ", lovTop=" + lovTop + ", lovLeft=" + lovLeft + "]";
+		return "lovReturns=" + lovReturns_item;
 	}
 	
 	

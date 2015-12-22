@@ -61,11 +61,9 @@ public class ColumnRelation {
 
 	@Override
 	public String toString() {
-		return "ColumnRelation [clazz=" + clazz + ", db_object=" + db_object
-				+ ", columnRelationTemplate="
-				+ columnRelationTemplate + ", columnRelationEnumerationFile="
-				+ columnRelationEnumerationFile + ", elements_item="
-				+ elements_item + "]";
+		return "" + (db_object!=null ? "db_object=" + db_object : "")
+				+ (columnRelationEnumerationFile!=null ? ", columnRelationEnumerationFile=" + columnRelationEnumerationFile : "")
+				+ (elements_item!=null ? ", elements_item="+ elements_item : "");
 	}
 	
 	

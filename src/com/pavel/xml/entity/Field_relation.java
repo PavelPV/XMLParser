@@ -26,7 +26,7 @@ public class Field_relation {
 	 * for list of elements_item elements in xml
 	 * @author Pavel
 	 */
-	static class Elements_item {
+	public static class Elements_item {
 		
 		private String clazz;
 		private String master_name;
@@ -60,8 +60,7 @@ public class Field_relation {
 
 		@Override
 		public String toString() {
-			return "Elements_item [clazz=" + clazz + ", master_name="
-					+ master_name + ", slave_name=" + slave_name + "]";
+			return ", master_name=" + master_name + ", slave_name=" + slave_name;
 		}
 		
 	}
@@ -99,8 +98,7 @@ public class Field_relation {
 	}
 	@Override
 	public String toString() {
-		return "Field_relation [clazz=" + clazz + ", db_object=" + db_object
-				+ ", elements_item=" + elements_item + ", fieldRelationTemplate="
-				+ fieldRelationTemplate + "]";
+		return "" + (db_object!=null ? "db_object=" + db_object : "")				
+				+ (elements_item!=null ? ", elements_item=" + elements_item : "");
 	}
 }

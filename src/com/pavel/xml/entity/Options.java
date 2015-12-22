@@ -89,11 +89,7 @@ public class Options {
 	
 	@Override
 	public String toString() {
-		return "Options [clazz=" + clazz + ", property=" + property
-				+ ", labelProperty=" + labelProperty + ", db_object="
-				+ db_object + ", db_value=" + db_value + ", db_label="
-				+ db_label + ", template=" + template + ", listCode="
-				+ listCode + ", fileName=" + fileName + "]";
+		return fileName;
 	}
 
 }
