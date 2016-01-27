@@ -71,6 +71,8 @@ public class Window extends JFrame implements ActionListener {
     private JScrollPane scrolLov;
     private JSplitPane splitPanel;
 
+    private JProgressBar progressBar;
+
     public Window() {
         super("Xml Parser");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -280,12 +282,14 @@ public class Window extends JFrame implements ActionListener {
         this.splitPanel.setPreferredSize(new Dimension(900, 510));
         this.splitPanel.setDividerLocation(470);
 
+        this.progressBar = new JProgressBar();
         JPanel panel = new JPanel();
         panel.add(b_choosefile);
         panel.add(l_pageName);
         panel.add(t_pageName);
         panel.add(b_chooseFileChanges);
         panel.add(splitPanel);
+        panel.add(progressBar);
 
         this.b_choosefile.addActionListener(this);
         this.b_chooseFileChanges.addActionListener(this);

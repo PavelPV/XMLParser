@@ -74,11 +74,11 @@ public class XMLReader {
         FileWriter fileWriter = new FileWriter(this.filePath);
 
         int indexFrom = fileWriter.getFirstIndexOf(BL_FORM);
-        if (tag.equals(TITLE + "D")) {
+        if (tag.equals("titleD")) {
             this.findAndReplace(indexFrom, fileWriter.getFirstIndexOf(FIELDS_ITEM, indexFrom), TITLE, tagValue, fileWriter);
             return;
         }
-        if (tag.equals(TITLE + "R")) {
+        if (tag.equals("titleR")) {
             this.writeIntoReport(fieldName, tag, tagValue);
         }
         int index = fileWriter.getFirstIndexOf("<name>" + fieldName + "</name>", indexFrom);
@@ -89,18 +89,7 @@ public class XMLReader {
         int indexEnd = fileWriter.getFirstIndexOf(FIELDS_ITEM, index);
 
         if (tag.equals("placeD")) {
-            index = fileWriter.getFirstPreviousIndex(FIELDS_ITEM, indexFrom, index);
-            String piece = fileWriter.readFileFrom(index, indexEnd);
-            fileWriter.changeFilePartUsingMode(piece, "", index, 1);
-            List<Integer> indexesOfMarker = fileWriter.getAllIndexOf(FIELDS_ITEM);
-            for (int i = 0; i < indexesOfMarker.size(); i++) {
-                if (indexesOfMarker.get(i) > indexFrom) {
-                    i = i + Integer.parseInt(tagValue);
-                    index = indexesOfMarker.get(i);
-                    break;
-                }
-            }
-            fileWriter.changeFilePartUsingMode(FIELDS_ITEM, piece, index, 0);
+            this.moveElement(index, indexFrom, indexEnd, tagValue, FIELDS_ITEM, fileWriter);
             return;
         }
 
@@ -110,8 +99,10 @@ public class XMLReader {
 
 
         if (tag.equals("new")) {
-            fileWriter.changeFilePartUsingMode("<name>" + fieldName + "</name>", " <name>" + tagValue + "</name>", index, 1);
-            this.writeIntoReport(fieldName, tag, tagValue);
+            if (!(fieldName.equals(tagValue))) {
+                fileWriter.changeFilePartUsingMode("<name>" + fieldName + "</name>", " <name>" + tagValue + "</name>", index, 1);
+                this.writeIntoReport(fieldName, tag, tagValue);
+            }
             return;
         }
         /*
@@ -147,25 +138,17 @@ public class XMLReader {
         int indexEnd = fileWriter.getFirstIndexOf(COLUMNS_ITEM, index);
 
         if (tag.equals("placeR")) {
-            index = fileWriter.getFirstPreviousIndex(COLUMNS_ITEM, indexFrom, index);
-            String piece = fileWriter.readFileFrom(index, indexEnd);
-            fileWriter.changeFilePartUsingMode(piece, "", index, 1);
-            List<Integer> indexesOfMarker = fileWriter.getAllIndexOf(COLUMNS_ITEM);
-            for (int i = 0; i < indexesOfMarker.size(); i++) {
-                if (indexesOfMarker.get(i) > indexFrom) {
-                    i = i + Integer.parseInt(tagValue);
-                    index = indexesOfMarker.get(i);
-                    break;
-                }
-            }
-            fileWriter.changeFilePartUsingMode(COLUMNS_ITEM, piece, index, 0);
+            this.moveElement(index, indexFrom, indexEnd , tagValue, COLUMNS_ITEM, fileWriter);
             return;
         }
 
         if (tag.equals("new")) {
-            fileWriter.changeFilePartUsingMode("<name>" + columnName + "</name>", " <name>" + tagValue + "</name>", index, 1);
+            if (!(columnName.equals(tagValue))) {
+                fileWriter.changeFilePartUsingMode("<name>" + columnName + "</name>", " <name>" + tagValue + "</name>", index, 1);
+            }
             return;
         }
+
 		/*
 		 * find parameter for changing(marker) by regex pattern
 		 */
@@ -176,12 +159,43 @@ public class XMLReader {
 
     public void findAndReplace(int index, int indexEnd, String tag, String tagValue, FileWriter fileWriter) throws IOException {
         String marker = fileWriter.getValueInFirstIndexByPattern("\\s*(<" + tag + ">\\S*</" + tag + ">)\\s*", index);
-        if (!(marker.equals("-1"))) {
+        String newText = "<"+ tag + ">" + tagValue + "</" + tag + ">";
+        if ((!(marker.equals("-1")))&&(!(marker.equals(newText)))) {
             index = fileWriter.getFirstIndexOf(marker, index);
             if (index <= indexEnd) {
-                fileWriter.changeFilePartUsingMode(marker.length(), " <"+ tag + ">" + tagValue + "</" + tag + ">", index, 1);
+                fileWriter.changeFilePartUsingMode(marker.length(), " " + newText, index, 1);
             }
         }
+    }
+
+    public void moveElement(int index, int indexFrom, int indexEnd, String tagValue, String item, FileWriter fileWriter) throws IOException {
+        index = fileWriter.getFirstPreviousIndex(item, indexFrom, index);
+        List<Integer> indexesOfMarker = fileWriter.getAllIndexOf(item);
+        /*
+         * check location of element if it the same - return
+         */
+        int counter = 0;
+        while(indexesOfMarker.get(counter) < indexFrom) {
+            counter++;
+        }
+        counter = counter + Integer.parseInt(tagValue);
+        if (indexesOfMarker.get(counter).equals(index)){
+            return;
+        }
+        /*
+         * remove current element from list and change all next
+         * work faster
+         */
+        int current = indexesOfMarker.indexOf(index);
+        int difference = indexesOfMarker.get(current + 1) - indexesOfMarker.get(current);
+        for(int i = current; i < indexesOfMarker.size()-1; i++) {
+            indexesOfMarker.set(i, indexesOfMarker.get(i + 1) - difference);
+        }
+        indexesOfMarker.remove(indexesOfMarker.size()-1);
+
+        String piece = fileWriter.readFileFrom(index, indexEnd);
+        fileWriter.changeFilePartUsingMode(piece, "", index, 1);
+        fileWriter.changeFilePartUsingMode(item, piece, indexesOfMarker.get(counter), 0);
     }
 
     /**

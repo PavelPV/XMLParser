@@ -97,7 +97,6 @@ public class FileWriter {
                 this.writeInto(indexOfMarker, t, newText + " ");
                 break;
             case 1:
-                System.out.println(indexOfMarker);
                 t = this.readFileFrom(indexOfMarker + marker.length() + 1);
                 this.writeInto(indexOfMarker, t, newText);
                 if (newText.length() < marker.length()) {
