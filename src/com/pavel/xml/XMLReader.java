@@ -6,19 +6,26 @@ import com.pavel.xml.entity.Generator;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class XMLReader {
 
     private FileInputStream inputStream;
     private String filePath;
+    private int progress = 0;
+    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     private static String TITLE = "title";
     private static String FIELDS_ITEM = "<fields_item>";
     private static String BL_FORM = "bl_form";
     private static String BL_REPORT = "bl_report";
     private static String COLUMNS_ITEM = "<columns_item>";
+
+    public XMLReader(){}
 
     public XMLReader(String filePath) throws FileNotFoundException {
         this.inputStream = new FileInputStream(filePath);
@@ -45,9 +52,14 @@ public class XMLReader {
      * @throws IOException
      */
     public void makeChanges(BufferedReader bufferedReader) throws IOException {
-        String changesLine = "";
+        String changesLine;
         String fieldName = "";
-        while ((changesLine = bufferedReader.readLine()) != null) {
+        Stream<String> stream = bufferedReader.lines();
+        Object[] array = stream.toArray();
+        long size = array.length;
+        this.setProgress(0);
+        for(Object line : array) {
+            changesLine = line.toString();
             String[] changesParameters = changesLine.split("=");
             if (changesParameters[0].equals("name")) {
                 fieldName = changesParameters[1];
@@ -57,7 +69,9 @@ public class XMLReader {
             if (changesParameters[0].equals("new")) {
                 fieldName = changesParameters[1];
             }
+            this.setProgress((int)(this.progress + (100 / size)));
         }
+        this.setProgress(100);
     }
 
     /**
@@ -258,6 +272,36 @@ public class XMLReader {
         xmlBuilder = new StringBuilder(xmlBuilder.toString().replaceAll("&", "&amp;"));
         return xmlBuilder.toString();
 
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        int oldVal = this.progress;
+        this.progress = progress;
+        this.propertyChangeSupport.firePropertyChange("progress", oldVal, progress);
+    }
+
+    public FileInputStream getInputStream() {
+        return inputStream;
+    }
+
+    public void setInputStream(FileInputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
 }

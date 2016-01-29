@@ -10,6 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -283,6 +285,12 @@ public class Window extends JFrame implements ActionListener {
         this.splitPanel.setDividerLocation(470);
 
         this.progressBar = new JProgressBar();
+        this.progressBar.setStringPainted(true);
+        this.progressBar.setMinimum(0);
+        this.progressBar.setMaximum(100);
+        this.progressBar.setPreferredSize(new Dimension(250, 20));
+        this.progressBar.setVisible(false);
+
         JPanel panel = new JPanel();
         panel.add(b_choosefile);
         panel.add(l_pageName);
@@ -432,7 +440,18 @@ public class Window extends JFrame implements ActionListener {
             if (approve == JFileChooser.APPROVE_OPTION) {
                 try {
                     Date start = new Date();
+//                    this.app.setFilePath(fileOpen.getSelectedFile().getAbsolutePath().replace('\\', '/'));
+//                    this.app.setInputStream(new FileInputStream(fileOpen.getSelectedFile().getAbsolutePath().replace('\\', '/')));
                     this.app = new XMLReader(fileOpen.getSelectedFile().getAbsolutePath().replace('\\', '/'));
+                    this.app.addPropertyChangeListener(new PropertyChangeListener() {
+                        @Override
+                        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                            if ("progress".equals(propertyChangeEvent.getPropertyName())) {
+                                progressBar.setValue(app.getProgress());
+                                progressBar.update(progressBar.getGraphics());
+                            }
+                        }
+                    });
                     Generator generator = this.app.parseXml();
                     reportBlock = new Blocks_item();
                     detailBlock = new Blocks_item();
@@ -495,8 +514,10 @@ public class Window extends JFrame implements ActionListener {
                     e.printStackTrace();
                 }
             }
-        } else if (event.getSource() == b_chooseFileChanges) {
 
+            this.progressBar.setValue(0);
+        } else if (event.getSource() == b_chooseFileChanges) {
+            this.progressBar.setVisible(true);
             JFileChooser fileChanges = new JFileChooser();
             fileChanges.setCurrentDirectory(new File(FOLDER));
             int approve = fileChanges.showDialog(null, "Choose file with your changes");
@@ -512,6 +533,7 @@ public class Window extends JFrame implements ActionListener {
                     e.printStackTrace();
                 }
             }
+            this.progressBar.setVisible(false);
         }
     }
 }
