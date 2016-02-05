@@ -1,8 +1,6 @@
 package com.pavel.write;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,7 @@ public class FileWriter {
     private String fileName = "";
     private RandomAccessFile randomAccessFile;
 
-    public FileWriter(String file) throws FileNotFoundException {
+    public FileWriter(String file) throws FileNotFoundException, IOException {
         this.fileName = file;
         this.randomAccessFile = new RandomAccessFile(file, "rw");
     }
@@ -97,10 +95,10 @@ public class FileWriter {
                 this.writeInto(indexOfMarker, t, newText + " ");
                 break;
             case 1:
-                t = this.readFileFrom(indexOfMarker + marker.length() + 1);
+                t = this.readFileFrom(indexOfMarker + marker.length());
                 this.writeInto(indexOfMarker, t, newText);
                 if (newText.length() < marker.length()) {
-                    randomAccessFile.setLength(randomAccessFile.length() - (marker.length() + 1 - newText.length()));
+                    randomAccessFile.setLength(randomAccessFile.length() - (marker.length() - newText.length()));
                 }
                 break;
             case 2:
@@ -136,10 +134,10 @@ public class FileWriter {
                 this.writeInto(indexOfMarker, t, newText + " ");
                 break;
             case 1:
-                t = this.readFileFrom(indexOfMarker + markerLength + 1);
+                t = this.readFileFrom(indexOfMarker + markerLength);
                 this.writeInto(indexOfMarker, t, newText);
                 if (newText.length() < markerLength) {
-                    randomAccessFile.setLength(randomAccessFile.length() - (markerLength + 1 - newText.length()));
+                    randomAccessFile.setLength(randomAccessFile.length() - (markerLength - newText.length()));
                 }
                 break;
             case 2:
@@ -229,8 +227,10 @@ public class FileWriter {
     public int getFirstIndexOf(String marker) throws IOException {
         this.randomAccessFile.seek(0);
         String tempLine = this.randomAccessFile.readLine();
+        long pointer = this.randomAccessFile.getFilePointer();
 
         while ((tempLine != null) && (!tempLine.contains(marker))) {
+            pointer = this.randomAccessFile.getFilePointer();
             tempLine = this.randomAccessFile.readLine();
         }
         if (tempLine == null) {
@@ -239,10 +239,9 @@ public class FileWriter {
         /*
 		 * logic that find position in current line
 		 */
-        int lineLength = tempLine.length() + 2;
+//        int lineLength = tempLine.length() + 1;
         int positionAtLine = tempLine.indexOf(marker);
-        int resultIndex = (int) this.randomAccessFile.getFilePointer();
-        resultIndex = resultIndex - (lineLength - positionAtLine);
+        int resultIndex = (int)pointer + positionAtLine;
         return resultIndex;
     }
 
@@ -287,18 +286,17 @@ public class FileWriter {
     public int getFirstIndexOf(String marker, int indexFrom) throws IOException {
         this.randomAccessFile.seek(indexFrom);
         String tempLine = this.randomAccessFile.readLine();
+        long pointer = this.randomAccessFile.getFilePointer();
 
         while ((tempLine != null) && (!tempLine.contains(marker))) {
+            pointer = this.randomAccessFile.getFilePointer();
             tempLine = this.randomAccessFile.readLine();
         }
         if (tempLine == null) {
             return -1;
         }
-        int lineLength = tempLine.length() + 2;
         int positionAtLine = tempLine.indexOf(marker);
-        int resultIndex = (int) this.randomAccessFile.getFilePointer();
-        this.randomAccessFile.read();
-        resultIndex = resultIndex - (lineLength - positionAtLine);
+        int resultIndex = (int)pointer + positionAtLine;
         return resultIndex;
     }
 
@@ -336,20 +334,21 @@ public class FileWriter {
         this.randomAccessFile.seek(0);
         Map<Integer, String> resultMap = new TreeMap<Integer, String>();
         String tempLine = this.randomAccessFile.readLine();
+        long pointer = this.randomAccessFile.getFilePointer();
 
         while (tempLine != null) {
             while ((tempLine != null) && (!tempLine.contains(marker))) {
                 tempLine = this.randomAccessFile.readLine();
+                pointer = this.randomAccessFile.getFilePointer();
             }
             if (tempLine == null) {
                 break;
             }
             String subLine = tempLine;
             while (subLine.contains(marker)) {
-                int lineLength = subLine.length() + 2;
+//                int lineLength = subLine.length() + 2;
                 int positionAtLine = subLine.indexOf(marker);
-                int resultIndex = (int) this.randomAccessFile.getFilePointer();
-                resultIndex = resultIndex - (lineLength - positionAtLine);
+                int resultIndex = (int)pointer + positionAtLine;
                 resultMap.put(resultIndex, tempLine);
                 subLine = subLine.substring(positionAtLine + marker.length());
             }
@@ -371,9 +370,11 @@ public class FileWriter {
         this.randomAccessFile.seek(0);
         List<Integer> listOfIndex = new ArrayList<Integer>();
         String tempLine = this.randomAccessFile.readLine();
+        long pointer = this.randomAccessFile.getFilePointer();
 
         while (tempLine != null) {
             while ((tempLine != null) && (!tempLine.contains(marker))) {
+                pointer = this.randomAccessFile.getFilePointer();
                 tempLine = this.randomAccessFile.readLine();
             }
             if (tempLine == null) {
@@ -381,10 +382,9 @@ public class FileWriter {
             }
             String subLine = tempLine;
             while (subLine.contains(marker)) {
-                int lineLength = subLine.length() + 2;
+//                int lineLength = subLine.length() + 1;
                 int positionAtLine = subLine.indexOf(marker);
-                int resultIndex = (int) this.randomAccessFile.getFilePointer();
-                resultIndex = resultIndex - (lineLength - positionAtLine);
+                int resultIndex = (int) pointer + positionAtLine;
                 listOfIndex.add(resultIndex);
                 subLine = subLine.substring(positionAtLine + marker.length());
             }

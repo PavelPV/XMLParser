@@ -752,7 +752,7 @@ public class EntityXML {
 //				+ labelTitleKey + ", fieldGridSize=" + fieldGridSize
 //				+ ", queryOperator=" + queryOperator + ", round_value="
 //				+ round_value + ", field_prefix=" + field_prefix
-//				+ ", field_sufix=" + field_sufix + ", writeIntoDetail=" + writeIntoDetail
+//				+ ", field_sufix=" + field_sufix + ", writeIntoStage=" + writeIntoStage
 //				+ ", fieldSetProperty=" + fieldSetProperty + ", accesskey="
 //				+ accesskey + ", disabled=" + disabled + ", onblur=" + onblur
 //				+ ", onchange=" + onchange + ", onclick=" + onclick
@@ -837,7 +837,7 @@ public class EntityXML {
 	              + ((!("".equals(round_value))&&(round_value!=null)) ? "round_value="+ round_value + "\n"  : "")
 	              + ((!("".equals(field_prefix))&&(field_prefix!=null)) ? "field_prefix=" + field_prefix + "\n" : "")
 	              + ((!("".equals(field_sufix))&&(field_sufix!=null)) ? "field_sufix=" + field_sufix + "\n"  : "")
-	              + ((!("".equals(write))&&(write!=null)) ? "writeIntoDetail=" + write + "\n" : "")
+	              + ((!("".equals(write))&&(write!=null)) ? "writeIntoStage=" + write + "\n" : "")
 	              + ((!("".equals(fieldSetProperty))&&(fieldSetProperty!=null)) ? "fieldSetProperty=" + fieldSetProperty + "\n"  : "")
 	              + ((!("".equals(accesskey))&&(accesskey!=null)) ? "accesskey="+ accesskey + "\n"  : "")
 	              + ((!("".equals(disabled))&&(disabled!=null)) ? "disabled=" + disabled + "\n"  : "")

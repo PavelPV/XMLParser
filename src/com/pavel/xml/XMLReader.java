@@ -16,20 +16,46 @@ public class XMLReader {
 
     private FileInputStream inputStream;
     private String filePath;
+    private FileWriter fileWriter;
+
+    private int indexStage;
+    private int indexName;
     private int progress = 0;
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-    private static String TITLE = "title";
+    private static String BLOCKS = "<blocks>";
     private static String FIELDS_ITEM = "<fields_item>";
     private static String BL_FORM = "bl_form";
     private static String BL_REPORT = "bl_report";
     private static String COLUMNS_ITEM = "<columns_item>";
+    private static String NEW_COLUMN;
+    private static String NEW_FIELD;
+    static {
+        try {
+            StringWriter writer = new StringWriter();
+            FileInputStream inputStreamNewEntity = new FileInputStream("XMLParser/src/new_column.txt");
+            while(inputStreamNewEntity.available() > 0) {
+                writer.write(inputStreamNewEntity.read());
+            }
+            NEW_COLUMN = writer.toString();
+            writer = new StringWriter();
+            inputStreamNewEntity = new FileInputStream("XMLParser/src/new_field.txt");
+            while(inputStreamNewEntity.available() > 0) {
+                writer.write(inputStreamNewEntity.read());
+            }
+            NEW_FIELD = writer.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public XMLReader(){}
 
-    public XMLReader(String filePath) throws FileNotFoundException {
+    public XMLReader(String filePath) throws IOException {
         this.inputStream = new FileInputStream(filePath);
         this.filePath = filePath;
+        this.fileWriter = new FileWriter(this.filePath);
     }
 
     public Generator parseXml() throws JAXBException, IOException {
@@ -52,144 +78,139 @@ public class XMLReader {
      * @throws IOException
      */
     public void makeChanges(BufferedReader bufferedReader) throws IOException {
-        String changesLine;
-        String fieldName = "";
+        String entityName = "";
+        String stageName = "";
         Stream<String> stream = bufferedReader.lines();
         Object[] array = stream.toArray();
         long size = array.length;
         this.setProgress(0);
         for(Object line : array) {
-            changesLine = line.toString();
-            String[] changesParameters = changesLine.split("=");
-            if (changesParameters[0].equals("name")) {
-                fieldName = changesParameters[1];
-                continue;
-            }
-            writeIntoDetail(fieldName, changesParameters[0], changesParameters[1]);
-            if (changesParameters[0].equals("new")) {
-                fieldName = changesParameters[1];
-            }
             this.setProgress((int)(this.progress + (100 / size)));
+            String changesLine = line.toString();
+            String[] changesParameters = changesLine.split("=");
+            switch (changesParameters[0]) {
+                case "stage":
+                    stageName = changesParameters[1];
+                    this.indexStage = this.fileWriter.getFirstIndexOf(stageName);
+                    break;
+                case "name":
+                    entityName = changesParameters[1];
+                    this.indexName = this.fileWriter.getFirstIndexOf("<name>" + entityName + "</name>", this.indexStage);
+                    break;
+                case "new" :
+                    try {
+                        this.writeIntoStage(stageName, entityName, changesParameters[0], changesParameters[1]);
+                        entityName = changesParameters[1];
+                        break;
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case "add" :
+                    try {
+                        this.writeIntoStage(stageName, entityName, changesParameters[0], changesParameters[1]);
+                        entityName = changesParameters[1];
+                        this.indexName = this.fileWriter.getFirstIndexOf(
+                                "<name>" + changesParameters[1] + "</name>", this.indexStage);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                    break;
+                case "drop":
+                    entityName = changesParameters[1];
+                    this.indexName = this.fileWriter.getFirstIndexOf(
+                            "<name>" + changesParameters[1] + "</name>", this.indexStage);
+                    this.writeIntoStage(stageName, entityName, changesParameters[0], changesParameters[1]);
+                    break;
+                default:
+                    try {
+                        this.writeIntoStage(stageName, entityName, changesParameters[0], changesParameters[1]);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+            }
         }
         this.setProgress(100);
     }
 
     /**
-     * Method for writeIntoDetail all changes into xml file
-     * Using FileWriter class from com.pavel.writeIntoDetail package
+     * Method for writeIntoStage all changes into xml file
+     * Using FileWriter class from com.pavel.writeIntoStage package
      *
-     * @param fieldName  -  name of field to change
+     * @param entityName  -  name of field to change
      * @param tag  - tag name of parameter to change
      * @param tagValue - value of tag(parameter) that must be changed
      *
      * @throws IOException
      */
-    public void writeIntoDetail(String fieldName, String tag, String tagValue) throws IOException {
-        FileWriter fileWriter = new FileWriter(this.filePath);
-
-        int indexFrom = fileWriter.getFirstIndexOf(BL_FORM);
-        if (tag.equals("titleD")) {
-            this.findAndReplace(indexFrom, fileWriter.getFirstIndexOf(FIELDS_ITEM, indexFrom), TITLE, tagValue, fileWriter);
+    private void writeIntoStage(String stageName, String entityName, String tag, String tagValue) throws IOException {
+        if ("".equals(entityName)) {
+            this.findAndReplace(this.indexStage, this.fileWriter.getFirstIndexOf(BLOCKS, this.indexStage), tag, tagValue);
             return;
         }
-        if (tag.equals("titleR")) {
-            this.writeIntoReport(fieldName, tag, tagValue);
-        }
-        int index = fileWriter.getFirstIndexOf("<name>" + fieldName + "</name>", indexFrom);
-        if (index == -1) {
-            return;
-        }
+        if (this.indexName == -1) { return; }
 
-        int indexEnd = fileWriter.getFirstIndexOf(FIELDS_ITEM, index);
-
-        if (tag.equals("placeD")) {
-            this.moveElement(index, indexFrom, indexEnd, tagValue, FIELDS_ITEM, fileWriter);
-            return;
-        }
-
-        if (tag.equals("placeR")) {
-            this.writeIntoReport(fieldName, tag, tagValue);
+        String item;
+        switch (stageName) {
+            case "fields" :
+                item = FIELDS_ITEM;
+                break;
+            case "columns":
+                item = COLUMNS_ITEM;
+                break;
+            default       :
+                item = FIELDS_ITEM;
         }
 
+        int indexEnd = this.fileWriter.getFirstIndexOf(item, this.indexName);
 
-        if (tag.equals("new")) {
-            if (!(fieldName.equals(tagValue))) {
-                fileWriter.changeFilePartUsingMode("<name>" + fieldName + "</name>", " <name>" + tagValue + "</name>", index, 1);
-                this.writeIntoReport(fieldName, tag, tagValue);
-            }
-            return;
+        switch (tag) {
+            case "place":
+                this.moveElement(indexEnd, tagValue, item);
+                this.indexName = this.fileWriter.getFirstIndexOf("<name>" + entityName + "</name>", this.indexStage);
+                break;
+            case "new"  :
+                if (!(entityName.equals(tagValue))) {
+                    this.fileWriter.changeFilePartUsingMode(
+                            "<name>" + entityName + "</name>", "<name>" + tagValue + "</name>", this.indexName, 1);
+                }
+                break;
+            case "add"  :
+                this.fileWriter.changeFilePartUsingMode(item, createEntityBlock(stageName, tagValue), indexEnd, 0);
+                break;
+            case "drop" :
+                int index = this.fileWriter.getFirstPreviousIndex(item, this.indexStage, this.indexName);
+                this.fileWriter.changeFilePartUsingMode(this.fileWriter.readFileFrom(index, indexEnd), "", index, 1);
+                break;
+            default     :
+                this.findAndReplace(this.indexName, indexEnd, tag, tagValue);
         }
+    }
+
+    public void findAndReplace(int index, int indexEnd, String tag, String tagValue) throws IOException {
         /*
 		 * find parameter for changing(marker) by regex pattern
 		 */
-
-        this.findAndReplace(index, indexEnd, tag, tagValue, fileWriter);
-
-        if (tag.equals("label")) {
-            this.writeIntoReport(fieldName, tag, tagValue);
-        }
-    }
-
-    /**
-     * Method for writeIntoDetail all changes into xml file into report part
-     * Using FileWriter class from com.pavel.writeIntoDetail package
-     *
-     * @param columnName     of field to change
-     * @param tag      of parameter to change
-     * @param tagValue - value of tag(parameter) that must be changed
-     *
-     * @throws IOException
-     */
-    public void writeIntoReport(String columnName, String tag, String tagValue) throws IOException {
-        FileWriter fileWriter = new FileWriter(this.filePath);
-
-        int indexFrom = fileWriter.getFirstIndexOf(BL_REPORT);
-        if (tag.equals(TITLE + "R")) {
-            findAndReplace(indexFrom, fileWriter.getFirstIndexOf(COLUMNS_ITEM, indexFrom), TITLE, tagValue, fileWriter);
-            return;
-        }
-        int index = fileWriter.getFirstIndexOf("<name>" + columnName + "</name>", indexFrom);
-        int indexEnd = fileWriter.getFirstIndexOf(COLUMNS_ITEM, index);
-
-        if (tag.equals("placeR")) {
-            this.moveElement(index, indexFrom, indexEnd , tagValue, COLUMNS_ITEM, fileWriter);
-            return;
-        }
-
-        if (tag.equals("new")) {
-            if (!(columnName.equals(tagValue))) {
-                fileWriter.changeFilePartUsingMode("<name>" + columnName + "</name>", " <name>" + tagValue + "</name>", index, 1);
-            }
-            return;
-        }
-
-		/*
-		 * find parameter for changing(marker) by regex pattern
-		 */
-
-        this.findAndReplace(index, indexEnd, tag, tagValue, fileWriter);
-
-    }
-
-    public void findAndReplace(int index, int indexEnd, String tag, String tagValue, FileWriter fileWriter) throws IOException {
-        String marker = fileWriter.getValueInFirstIndexByPattern("\\s*(<" + tag + ">\\S*</" + tag + ">)\\s*", index);
+        String marker = this.fileWriter.getValueInFirstIndexByPattern("\\s*(<" + tag + ">\\S*</" + tag + ">)\\s*", index);
         String newText = "<"+ tag + ">" + tagValue + "</" + tag + ">";
         if ((!(marker.equals("-1")))&&(!(marker.equals(newText)))) {
-            index = fileWriter.getFirstIndexOf(marker, index);
+            index = this.fileWriter.getFirstIndexOf(marker, index);
             if (index <= indexEnd) {
-                fileWriter.changeFilePartUsingMode(marker.length(), " " + newText, index, 1);
+                this.fileWriter.changeFilePartUsingMode(marker.length(), newText, index, 1);
             }
         }
     }
 
-    public void moveElement(int index, int indexFrom, int indexEnd, String tagValue, String item, FileWriter fileWriter) throws IOException {
-        index = fileWriter.getFirstPreviousIndex(item, indexFrom, index);
-        List<Integer> indexesOfMarker = fileWriter.getAllIndexOf(item);
+    public void moveElement(int indexEnd, String tagValue, String item) throws IOException {
+        int index = this.fileWriter.getFirstPreviousIndex(item, this.indexStage, this.indexName);
+        List<Integer> indexesOfMarker = this.fileWriter.getAllIndexOf(item);
         /*
          * check location of element if it the same - return
          */
         int counter = 0;
-        while(indexesOfMarker.get(counter) < indexFrom) {
+        while(indexesOfMarker.get(counter) < this.indexStage) {
             counter++;
         }
         counter = counter + Integer.parseInt(tagValue);
@@ -207,9 +228,28 @@ public class XMLReader {
         }
         indexesOfMarker.remove(indexesOfMarker.size()-1);
 
-        String piece = fileWriter.readFileFrom(index, indexEnd);
-        fileWriter.changeFilePartUsingMode(piece, "", index, 1);
-        fileWriter.changeFilePartUsingMode(item, piece, indexesOfMarker.get(counter), 0);
+        String piece = this.fileWriter.readFileFrom(index, indexEnd);
+        this.fileWriter.changeFilePartUsingMode(piece, "", index, 1);
+        this.fileWriter.changeFilePartUsingMode(item, piece, indexesOfMarker.get(counter), 0);
+    }
+
+    private String createEntityBlock(String stageName, String tagValue) {
+        String result;
+        switch (stageName) {
+            case "columns" :
+                result = NEW_COLUMN;
+                break;
+            case "fields"  :
+                result = NEW_FIELD;
+                break;
+            default        :
+                result = "";
+        }
+        int index = result.indexOf("</name>");
+        if (index!=-1) {
+            result = result.substring(0, index) + tagValue + result.substring(index, result.length());
+        }
+        return result;
     }
 
     /**
